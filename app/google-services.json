@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "564692662697",
+    "project_id": "user-71fe0",
+    "storage_bucket": "user-71fe0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564692662697:android:45f4746f6d0151163cacb8",
+        "android_client_info": {
+          "package_name": "com.aviansoft.user"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSKlX2C4tu21djqYZOdFQso35YHLGJeQw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
