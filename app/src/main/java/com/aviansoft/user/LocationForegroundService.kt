@@ -68,7 +68,7 @@ class LocationForegroundService : Service() {
                     // Handle location updates here
                     Log.e(TAG,"Latitude: ${location.latitude}, Longitude: ${location.longitude}")
                     var lo = LocLatLong(location.latitude,location.longitude)
-                    var da = UserModel(pref.getPrefString("uid"),"email","Harsh",lo)
+                    var da = UserModel(pref.getPrefString("uid"),pref.getPrefString("email"),pref.getPrefString("name"),lo)
                     dbRef.root.child("User").child(pref.getPrefString("uid")).setValue(da)
                 }
             }

@@ -37,15 +37,22 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         dbRef = FirebaseDatabase.getInstance().reference
 
+        if (!pref.getPrefString("uid").equals("")) {
+            startActivity(Intent(this,MainActivity::class.java))
+        }
+
         binding.btnLogin.setOnClickListener {
 
             var email = binding.edtEmail.text.toString()
             var password = binding.edtPassword.text.toString()
+            var name = binding.edtName.text.toString()
 
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
 
                 var user = it.result.user
                 pref.setPref("uid", user?.uid!!)
+                pref.setPref("email", email)
+                pref.setPref("name", name)
                 findLocation(email, user.uid)
                 startActivity(Intent(this, MainActivity::class.java))
             }
@@ -81,7 +88,7 @@ class LoginActivity : AppCompatActivity() {
                 val longitude = location.longitude
 
                 var lo = LocLatLong(latitude,longitude)
-                var da = UserModel(uid,email,"Harsh",lo)
+                var da = UserModel(uid,email,pref.getPrefString("name"),lo)
                 dbRef.root.child("User").child(uid).setValue(da)
                 // Do something with latitude and longitude
                 // For example, log them or update UI

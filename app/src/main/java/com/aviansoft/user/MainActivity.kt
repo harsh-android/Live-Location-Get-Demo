@@ -12,13 +12,20 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.aviansoft.caronphone.Utils.Pref
+import com.aviansoft.user.Activitys.RequestActivity
+import com.aviansoft.user.Adapters.FriendAdapter
+import com.aviansoft.user.Adapters.RequestAdapter
 import com.aviansoft.user.databinding.ActivityLoginBinding
 import com.aviansoft.user.databinding.ActivityMainBinding
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,10 +42,38 @@ class MainActivity : AppCompatActivity() {
         pref = Pref(this, "Login")
         dbRef = FirebaseDatabase.getInstance().reference
 
-        getLastLocation("",pref.getPrefString("uid"))
+        getLastLocation(pref.getPrefString("email"),pref.getPrefString("uid"))
+
+        binding.btnAdd.setOnClickListener {
+            startActivity(Intent(this,RequestActivity::class.java))
+        }
 
 
         startService(Intent(this,LocationForegroundService::class.java))
+
+
+        dbRef.root.child("Friend").child(pref.getPrefString("uid")).addValueEventListener(object :
+            ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                var requestList = ArrayList<FriendUserModel>()
+
+                for (snap in snapshot.children) {
+                    var data = snap.getValue(FriendUserModel::class.java)
+                    requestList.add(data!!)
+                }
+
+                binding.rcvFriendList.layoutManager = LinearLayoutManager(this@MainActivity)
+                binding.rcvFriendList.adapter = FriendAdapter(requestList)
+
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
+
+
 
     }
 
@@ -71,7 +106,7 @@ class MainActivity : AppCompatActivity() {
                     // Do something with latitude and longitude
                     Log.e(TAG, "onLocationChanged: $latitude $longitude" )
                     var lo = LocLatLong(latitude,longitude)
-                    var da = UserModel(uid,email,"Harsh",lo)
+                    var da = UserModel(uid,email,pref.getPrefString("name"),lo)
                     dbRef.root.child("User").child(uid).setValue(da).addOnFailureListener {
                         Log.e(TAG, "onLocationChanged: ${it.message}", )
                     }
